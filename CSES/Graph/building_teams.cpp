@@ -7,55 +7,47 @@ using namespace std;
 #define ll long long
 #define all(x) (x).begin(), (x).end()
 #define pb push_back
+int n, m;
 vvi adj;
-vi parent, vis, siz;
-int find_(int x){
-      if(parent[x] == x)return x;
-      return parent[x]=find_(parent[x]);
+vi parent, colors;
+bool dfs(int node, int color){
+      colors[node]= color;
+      for(auto nbr: adj[node]){
+            if(colors[nbr]==0){
+                  if(dfs(nbr, 3-color)==false){
+                  return false;
+            }
+            }else if(colors[nbr]==color){
+                  return false;
+            }
+      }
+      return true;
 }
 void solve(){
-      int n, m;
       cin>>n>>m;
       adj.resize(n+1);
-      vis.resize(n+1,  0);
-      parent.resize(n+1,  -1);
+      colors.resize(n+1,  0);
       for(int i=0; i<m;i++){
             int x, y;
             cin>>x>>y;
             adj[x].push_back(y);
             adj[y].push_back(x);
-      }   
-
-      queue<pair<int, int>>q;
-      q.push({1, 1}); 
-      int ans=-1;
-      vis[1]=1;
-      while(!q.empty()){
-            auto [node,dis] = q.front();
-            q.pop();
-            if(node == n){
-                  ans= dis;
-                  break;
-            }
-            for(auto i:adj[node]){
-                  if(!vis[i]){
-                        vis[i]=1;
-                        q.push({i, dis+1});
-                        parent[i]=node;
+      }
+      for(int i=1;i<=n;i++){
+            if(colors[i]==0){
+                  bool ispossible=dfs(i,1);
+                  if(!ispossible){
+                        cout<<"IMPOSSIBLE\n";
+                        return;
                   }
             }
       }
-      if(ans==-1){
-            cout<<"IMPOSSIBLE\n";
-      }else{
-            cout<<ans<<"\n";
-            function<void(int)> fn = [&](int val){
-                  if(val == -1) return;
-                  fn(parent[val]);  
-                  cout << val << " "; 
-            };
-            fn(n);
+
+      for(int i=1;i<=n;i++){
+            cout<<colors[i]<<" ";
       }
+      cout<<"\n";
+
 }
 int main(){
       ios_base::sync_with_stdio(false);
