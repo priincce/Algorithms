@@ -1,80 +1,66 @@
 #include <bits/stdc++.h>
 using namespace std;
-
-#define ll long long
-#define all(x) (x).begin(), (x).end()
-#define pb push_back
-#define pp pop_back
-#define umap unordered_map
-#define uset unordered_set
-#define sort(arr) sort(all(arr))
-#define min(arr) (*min_element(all(arr)))
-#define max(arr) (*max_element(all(arr)))
-#define lb(arr, x) (lower_bound(all(arr), (x)) - (arr).begin())
-#define ub(arr, x) (upper_bound(all(arr), (x)) - (arr).begin())
-const int MAXN = 1e5;
-ll fact[MAXN + 1], invFact[MAXN + 1];
-const int MOD = 1e9 + 7;
-ll modExp(ll base, ll exp, ll mod) {
-    ll result = 1;
-    while (exp > 0) {
-        if (exp % 2 == 1) result = (result * base) % mod;
-        base = (base * base) % mod;
-        exp /= 2;
-    }
-    return result;
-}
-void precompute_factorial() {
-    fact[0] = invFact[0] = 1;
-    for (int i = 1; i <= MAXN; i++) {
-        fact[i] = (fact[i - 1] * i) % MOD;
-        invFact[i] = modExp(fact[i], MOD - 2, MOD);
+vector<vector<int>>dp;
+string s, t;
+int n, m;
+bool memo(int i, int j){
+    if(i==n && j==m) return true;
+    if(j==m) return false;
+    if(dp[i][j] != -1) return dp[i][j];
+    bool first_match = (i<n && (s[i]==t[j] || t[j]=='.'));
+    if(j+1 <m && t[j+1]=='*'){
+        return dp[i][j]=memo(i, j+2) || (first_match && memo(i+1, j));
+    }else{
+        return dp[i][j] = first_match && memo(i+1, j+1);
     }
 }
-ll nCr(int n, int r) {
-    if (r > n || n < 0 || r < 0) return 0;
-    return (((fact[n] * invFact[r]) % MOD) * invFact[n - r]) % MOD;
-}
-ll nPr(int n, int r) {
-    if (r > n || n < 0 || r < 0) return 0;
-    return (fact[n] * invFact[n - r]) % MOD;
-}
-ll gcd(ll a, ll b) {
-    return b == 0 ? a : gcd(b, a % b);
-}
-ll lcm(ll a, ll b) {
-    return (a / gcd(a, b)) * b;
-}
-ll power(ll base, ll exp) {
-    ll result = 1;
-    while (exp > 0) {
-        if (exp % 2 == 1) result *= base;
-        base *= base;
-        exp /= 2;
+bool tab(){
+    dp.assign(n+1, vector<int>(m+1, 0));
+    dp[n][m]=1;
+    for(int i=n;i>=0;i--){
+        for(int j=m-1; j>=0; j--){
+            bool firstMatch = (i < n && (s[i] == t[j] || t[j] == '.'));
+
+            if (j + 1 < m && t[j + 1] == '*')
+                dp[i][j] = dp[i][j + 2] || (firstMatch && dp[i + 1][j]);
+            else
+                dp[i][j] = firstMatch && dp[i + 1][j + 1];
+        }
     }
-    return result;
+    return dp[0][0];
 }
-
-
-
-void solve()
-{
-      int n;
-      cin >> n;
-      vector<int>nums(n);
-      cout<< n<< endl;
+bool space_optimised(){
+    vector<bool> next(m + 1, false), curr(m + 1, false);
+    next[m] = true;
+    for (int i = n; i >= 0; i--){
+        curr[m] = (i == n);
+        for (int j = m - 1; j >= 0; j--){
+            bool firstMatch = (i < n && (s[i] == t[j] || t[j] == '.'));
+            if (j + 1 < m && t[j + 1] == '*')
+                curr[j] = (next[j] && firstMatch) || curr[j + 2];
+            else
+                curr[j] = firstMatch && next[j + 1];
+        }
+        next = curr;
+    }
+    return next[0];
 }
-int main()
-{
+void solve(){
+      cin>>s>>t;
+      n = s.size(), m = t.size();
+    //   dp.assign(n+1, vector<int>(m+1, -1));
+      cout<<(space_optimised()?"YES":"NO")<< "\n";
+
+}
+int main(){
       ios_base::sync_with_stdio(false);
       cin.tie(nullptr);
       cout.tie(nullptr);
 
-      int t = 1;
-      // cin >> t;
-      while(t--){
+    //   int t = 1;
+    //   cin >> t;
+    //   while(t--){
             solve();
-      }
+    //   }
       return 0;
 }
-
