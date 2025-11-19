@@ -2,7 +2,7 @@
 #define int long long
 using namespace std;
 struct trip{
-      int l=-1,r=-1,ind;
+      int l=-1,r=-1,ind=0;
 };
 bool compare(trip&a,trip&b){
       return a.r<b.r;
@@ -40,7 +40,7 @@ void solve() {
 
     sort(a.begin(), a.end(), compare);
     seg.assign(8 * n, 0);
-    vector<int> ans(n);
+    vector<int> ans(n+1);
 
     for (int i = 0; i < n; i++) {
       ans[a[i].ind - 1] = query(0, 0, 2 * n - 1, a[i].l, a[i].r - 1);
