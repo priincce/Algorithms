@@ -1,0 +1,22 @@
+#include <bits/stdc++.h>
+using namespace std;
+
+
+void solve(){
+      int x, y, n, b;
+      string s;
+      cin>>a>>y>>n>>b;
+      cin>>s;
+}
+int main(){
+      ios_base::sync_with_stdio(false);
+      cin.tie(nullptr);
+      cout.tie(nullptr);
+
+      int t = 1;
+      cin >> t;
+      while(t--){
+            solve();
+      }
+      return 0;
+}
